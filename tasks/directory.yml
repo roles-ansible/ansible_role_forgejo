@@ -4,29 +4,29 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "u=rwX,g=rX"
     recurse: true
   loop:
-    - "{{ gitea_user_home }}"
-    - "{{ gitea_home }}"
-    - "{{ gitea_home }}/data"
-    - "{{ gitea_custom }}"
-    - "{{ gitea_custom }}/https"
-    - "{{ gitea_custom }}/mailer"
-    - "{{ gitea_home }}/indexers"
-    - "{{ gitea_home }}/log"
-    - "{{ gitea_repository_root }}"
+    - "{{ forgejo_user_home }}"
+    - "{{ forgejo_home }}"
+    - "{{ forgejo_home }}/data"
+    - "{{ forgejo_custom }}"
+    - "{{ forgejo_custom }}/https"
+    - "{{ forgejo_custom }}/mailer"
+    - "{{ forgejo_home }}/indexers"
+    - "{{ forgejo_home }}/log"
+    - "{{ forgejo_repository_root }}"
 
 - name: "Create config and data directory"
   become: true
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "u=rwX,g=rX,o="
     recurse: true
   loop:
-    - "{{ gitea_configuration_path }}"
+    - "{{ forgejo_configuration_path }}"

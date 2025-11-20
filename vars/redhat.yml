@@ -1,7 +1,7 @@
 ---
-gitea_dependencies:
+forgejo_dependencies:
   - git
   - gnupg2
   - xz
 
-gitea_systemd_path: '/lib/systemd/system'
+forgejo_systemd_path: "/lib/systemd/system"

@@ -4,21 +4,21 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "u=rwX,g=rX,o="
   loop:
-    - "{{ gitea_custom }}/public"
-    - "{{ gitea_custom }}/public/assets"
-    - "{{ gitea_custom }}/public/assets/img"
+    - "{{ forgejo_custom }}/public"
+    - "{{ forgejo_custom }}/public/assets"
+    - "{{ forgejo_custom }}/public/assets/img"
 
 - name: Transfer custom logo.svg
   become: true
   ansible.builtin.copy:
     src: "{{ lookup('first_found', transfer_custom_logo_logosvg) }}"
-    dest: "{{ gitea_custom }}/public/assets/img/logo.svg"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    dest: "{{ forgejo_custom }}/public/assets/img/logo.svg"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "0640"
   tags: skip_ansible_lint
   failed_when: false
@@ -27,9 +27,9 @@
   become: true
   ansible.builtin.copy:
     src: "{{ lookup('first_found', transfer_custom_logo_logopng) }}"
-    dest: "{{ gitea_custom }}/public/assets/img/logo.png"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    dest: "{{ forgejo_custom }}/public/assets/img/logo.png"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "0640"
   tags: skip_ansible_lint
   failed_when: false
@@ -38,9 +38,9 @@
   become: true
   ansible.builtin.copy:
     src: "{{ lookup('first_found', transfer_custom_logo_faviconpng) }}"
-    dest: "{{ gitea_custom }}/public/assets/img/favicon.png"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    dest: "{{ forgejo_custom }}/public/assets/img/favicon.png"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "0640"
   tags: skip_ansible_lint
   failed_when: false
@@ -49,9 +49,9 @@
   become: true
   ansible.builtin.copy:
     src: "{{ lookup('first_found', transfer_custom_logo_appletouchiconpng) }}"
-    dest: "{{ gitea_custom }}/public/assets/img/apple-touch-icon.png"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    dest: "{{ forgejo_custom }}/public/assets/img/apple-touch-icon.png"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "0640"
   tags: skip_ansible_lint
   failed_when: false

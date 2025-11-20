@@ -4,21 +4,21 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
-    mode: 'u=rwX,g=rX,o='
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
+    mode: "u=rwX,g=rX,o="
   loop:
-    - "{{ gitea_custom }}/templates"
-    - "{{ gitea_custom }}/templates/custom"
+    - "{{ forgejo_custom }}/templates"
+    - "{{ forgejo_custom }}/templates/custom"
 
 - name: Transfer custom footer template
   become: true
   ansible.builtin.copy:
     src: "{{ lookup('first_found', transfer_custom_footer) }}"
-    dest: "{{ gitea_custom }}/templates/custom/extra_links_footer.tmpl"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
-    mode: '0640'
+    dest: "{{ forgejo_custom }}/templates/custom/extra_links_footer.tmpl"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
+    mode: "0640"
   failed_when: false
   tags: skip_ansible_lint
-  notify: "systemctl restart gitea"
+  notify: "systemctl restart forgejo"

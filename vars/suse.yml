@@ -1,7 +1,7 @@
 ---
-gitea_dependencies:
+forgejo_dependencies:
   - git
   - gpg2
   - xz
 
-gitea_systemd_path: '/etc/systemd/system'
+forgejo_systemd_path: "/etc/systemd/system"

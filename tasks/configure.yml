@@ -1,26 +1,26 @@
 ---
-- name: Make sure gitea_register_email_confirm is false when gitea_register_manual_confirm is true
+- name: Make sure forgejo_register_email_confirm is false when forgejo_register_manual_confirm is true
   ansible.builtin.fail:
     msg: |
       To manually confirm registrations,
-      gitea_register_email_confirm needs to be false
-      and gitea_register_manual_confirm should be true.
-  when: gitea_register_manual_confirm | bool and gitea_register_email_confirm | bool
+      forgejo_register_email_confirm needs to be false
+      and forgejo_register_manual_confirm should be true.
+  when: forgejo_register_manual_confirm | bool and forgejo_register_email_confirm | bool
 
-- name: "Configure gitea"
+- name: "Configure forgejo"
   become: true
   ansible.builtin.template:
-    src: 'templates/gitea.ini.j2'
-    dest: "{{ gitea_configuration_path }}/gitea.ini"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
-    mode: '0640'
-  notify: "systemctl restart gitea"
+    src: "templates/forgejo.ini.j2"
+    dest: "{{ forgejo_configuration_path }}/forgejo.ini"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
+    mode: "0640"
+  notify: "systemctl restart forgejo"
 
-- name: "Service gitea"
+- name: "Service forgejo"
   become: true
   ansible.builtin.systemd_service:
-    name: gitea
+    name: forgejo
     state: started
     enabled: true
   when: ansible_service_mgr == "systemd"

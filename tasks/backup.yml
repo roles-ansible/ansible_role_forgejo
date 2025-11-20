@@ -4,40 +4,40 @@
 
 - name: Backup block
   when:
-    - ansible_facts.services["gitea.service"] is defined
-    - ansible_facts.services["gitea.service"].state == "running"
-    - gitea_active_version.stdout != gitea_version_target
+    - ansible_facts.services["forgejo.service"] is defined
+    - ansible_facts.services["forgejo.service"].state == "running"
+    - forgejo_active_version.stdout != forgejo_version_target
   block:
-    - name: Stopping gitea before upgrade
+    - name: Stopping forgejo before upgrade
       become: true
       ansible.builtin.systemd_service:
-        name: 'gitea.service'
-        state: 'stopped'
+        name: "forgejo.service"
+        state: "stopped"
       when: ansible_service_mgr == "systemd"
 
     - name: "Create backup directory"
       become: true
       ansible.builtin.file:
-        path: "{{ gitea_backup_location }}"
-        state: 'directory'
-        owner: "{{ gitea_user }}"
-        group: "{{ gitea_group }}"
-        mode: 'u=rwx,g=rx,o='
+        path: "{{ forgejo_backup_location }}"
+        state: "directory"
+        owner: "{{ forgejo_user }}"
+        group: "{{ forgejo_group }}"
+        mode: "u=rwx,g=rx,o="
 
-    - name: Backing up gitea before upgrade
+    - name: Backing up forgejo before upgrade
       become: true
       ansible.builtin.command:
-        cmd: "sudo -u {{ gitea_user }} {{ gitea_full_executable_path }} dump -c {{ gitea_configuration_path }}/gitea.ini"
-        chdir: "{{ gitea_backup_location }}"
+        cmd: "sudo -u {{ forgejo_user }} {{ forgejo_full_executable_path }} dump -c {{ forgejo_configuration_path }}/gitea.ini"
+        chdir: "{{ forgejo_backup_location }}"
       changed_when: true
   rescue:
-    - name: Starting gitea because backup failed
+    - name: Starting forgejo because backup failed
       become: true
       ansible.builtin.systemd_service:
-        name: 'gitea.service'
-        state: 'started'
+        name: "forgejo.service"
+        state: "started"
       when: ansible_service_mgr == "systemd"
 
     - name: Print updating error and cancel
       ansible.builtin.fail:
-        msg: "failed to backup gitea"
+        msg: "failed to backup forgejo"

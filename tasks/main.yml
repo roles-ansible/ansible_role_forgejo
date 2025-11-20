@@ -8,53 +8,39 @@
   ansible.builtin.package_facts:
     manager: "auto"
 
-- name: Prepare gitea/forgejo variable import
+- name: Prepare forgejo variable import
   block:
-    - name: Gather vars for gitea or forgejo
+    - name: Gather vars for forgejo
       ansible.builtin.include_vars:
         file: "{{ lookup('ansible.builtin.first_found',
-                 gitea_fork_variables) }}"
-  rescue:
-    - name: Gitea/Forgejo import info
-      ansible.builtin.fail:
-        msg: "Only {{ gitea_supported_forks }} are supported."
-
-- name: Gather Gitea/Forgejo UI Theme variables
-  ansible.builtin.include_vars:
-    file: "{{ lookup('ansible.builtin.first_found', params) }}"
-  vars:
-    params:
-      files:
-        - "{{ gitea_fork }}.yml"
-      paths:
-        - "defaults"
+          forgejo_variables) }}"
 
 - name: Gather variables for each operating system
   ansible.builtin.include_vars:
-    file: "{{ lookup('ansible.builtin.first_found', gitea_variables) }}"
+    file: "{{ lookup('ansible.builtin.first_found', forgejo_os_variables) }}"
 
 - name: Gather versioning information
   ansible.builtin.include_tasks:
-    file: "set_{{ gitea_fork | lower }}_version.yml"
+    file: "set_forgejo_version.yml"
 
-- name: Backup gitea before update
+- name: Backup forgejo before update
   ansible.builtin.include_tasks:
     file: "backup.yml"
-  when: gitea_backup_on_upgrade|bool
+  when: forgejo_backup_on_upgrade|bool
 
-- name: Create gitea user and group
+- name: Create forgejo user and group
   ansible.builtin.include_tasks:
     file: "create_user.yml"
 
-- name: "Install or update {{ gitea_fork }}"
+- name: "Install or update forgejo"
   ansible.builtin.include_tasks:
-    file: "install_{{ gitea_fork | lower }}.yml"
+    file: "install_forgejo.yml"
 
 - name: Create directories
   ansible.builtin.include_tasks:
     file: "directory.yml"
 
-- name: Setup gitea systemd service
+- name: Setup forgejo systemd service
   ansible.builtin.include_tasks:
     file: "install_systemd.yml"
   when: ansible_service_mgr == "systemd"
@@ -63,35 +49,35 @@
   ansible.builtin.include_tasks:
     file: "jwt_secrets.yml"
 
-- name: Generate gitea secrets if undefined
+- name: Generate forgejo secrets if undefined
   ansible.builtin.include_tasks:
-    file: "gitea_secrets.yml"
+    file: "forgejo_secrets.yml"
 
-- name: Configure gitea
+- name: Configure forgejo
   ansible.builtin.include_tasks:
     file: "configure.yml"
 
 - name: Deploy optional fail2ban rules
   ansible.builtin.include_tasks:
     file: "fail2ban.yml"
-  when: gitea_fail2ban_enabled | bool
+  when: forgejo_fail2ban_enabled | bool
 
-- name: Optionally customize gitea
+- name: Optionally customize forgejo
   ansible.builtin.include_tasks:
     file: "customize_logo.yml"
-  when: gitea_customize_logo | bool
+  when: forgejo_customize_logo | bool
 
 - name: Optionally customize footer
   ansible.builtin.include_tasks:
     file: "customize_footer.yml"
-  when: gitea_customize_footer | bool
+  when: forgejo_customize_footer | bool
 
 - name: Optionally deploy public files
   ansible.builtin.include_tasks:
     file: "customize_public_files.yml"
-  when: gitea_customize_files | bool or gitea_custom_themes is defined
+  when: forgejo_customize_files | bool or forgejo_custom_themes is defined
 
 - name: Optionally create local Users on git instance
   ansible.builtin.include_tasks:
-    file: 'local_git_users.yml'
-  when: gitea_users | length > 0
+    file: "local_git_users.yml"
+  when: forgejo_users | length > 0

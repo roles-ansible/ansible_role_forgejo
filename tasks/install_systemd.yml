@@ -2,14 +2,14 @@
 - name: "Setup systemd service"
   become: true
   ansible.builtin.template:
-    src: 'templates/gitea.service.j2'
-    dest: "{{ gitea_systemd_path }}/gitea.service"
+    src: "templates/forgejo.service.j2"
+    dest: "{{ forgejo_systemd_path }}/forgejo.service"
     owner: root
     group: root
     mode: 0644
   notify:
     - "Reload systemd"
-    - "systemctl restart gitea"
+    - "systemctl restart forgejo"
 
 - name: "Reload systemd"
   become: true

@@ -1,9 +1,9 @@
 ---
-- name: "Restart gitea"
+- name: "Restart forgejo"
   become: true
-  listen: "systemctl restart gitea"
+  listen: "systemctl restart forgejo"
   ansible.builtin.systemd_service:
-    name: gitea
+    name: forgejo
     state: restarted
   when: ansible_service_mgr == "systemd"
 

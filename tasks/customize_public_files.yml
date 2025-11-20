@@ -4,41 +4,41 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "u=rwX,g=rX,o="
   loop:
-    - "{{ gitea_custom }}/public/assets/"
+    - "{{ forgejo_custom }}/public/assets/"
 
 - name: Transfer custom public web data
   become: true
   ansible.builtin.copy:
-    src: "{{ gitea_customize_files_path }}"
-    dest: "{{ gitea_custom }}/public/assets/"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    src: "{{ forgejo_customize_files_path }}"
+    dest: "{{ forgejo_custom }}/public/assets/"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     directory_mode: true
     mode: "u=rwX,g=rX,o="
   failed_when: false
   tags: skip_ansible_lint
-  notify: "systemctl restart gitea"
+  notify: "systemctl restart forgejo"
 
 - name: Create css directory for custom themes
-  when: gitea_custom_themes is defined
+  when: forgejo_custom_themes is defined
   ansible.builtin.file:
-    path: "{{ gitea_custom }}/public/css"
+    path: "{{ forgejo_custom }}/public/css"
     state: directory
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "u=rwX,g=rX,o="
 
 - name: Get custom themes
-  when: gitea_custom_themes is defined
+  when: forgejo_custom_themes is defined
   ansible.builtin.get_url:
     url: "{{ item.name }}"
-    dest: "{{ gitea_custom }}/css/{{ item.name | basename }}"
-    owner: "{{ gitea_user }}"
-    group: "{{ gitea_group }}"
+    dest: "{{ forgejo_custom }}/css/{{ item.name | basename }}"
+    owner: "{{ forgejo_user }}"
+    group: "{{ forgejo_group }}"
     mode: "u=rwX,g=rX,o="
-  loop: "{{ gitea_custom_themes }}"
-  notify: "systemctl restart gitea"
+  loop: "{{ forgejo_custom_themes }}"
+  notify: "systemctl restart forgejo"

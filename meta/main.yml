@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  role_name: gitea
+  role_name: forgejo
   author: roles-ansible
-  description: Ansible role to configure and deploy gitea and forgejo, a painless self-hosted Git service.
+  description: Ansible role to configure and deploy forgejo, a painless self-hosted Git service.
   license: "BSD-3-Clause"
   min_ansible_version: "2.11"
   platforms:
@@ -19,7 +19,6 @@ galaxy_info:
       versions:
         - all
   galaxy_tags:
-    - gitea
     - forgejo
     - git
     - system

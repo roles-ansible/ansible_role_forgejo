@@ -1,0 +1,311 @@
+; this file is the configuration of your local Forgejo instance
+{{ ansible_managed | comment(decoration="; ") }}
+;
+; This file overwrites the default values from Forgejo.
+; undefined variables will use the default value from Forgejo.
+; Cheat Sheet: https://forgejo.org/docs/latest/admin/config-cheat-sheet/
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#overall-default
+APP_NAME = {{ forgejo_app_name }}
+RUN_USER = {{ forgejo_user }}
+RUN_MODE = {{ forgejo_run_mode }}
+WORK_PATH = {{ forgejo_home }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#repository-repository
+[repository]
+ROOT = {{ forgejo_repository_root }}
+FORCE_PRIVATE = {{ forgejo_force_private | ternary('true', 'false') }}
+DEFAULT_PRIVATE = {{ forgejo_default_private }}
+MAX_CREATION_LIMIT = {{ forgejo_user_repo_limit }}
+DISABLE_HTTP_GIT = {{ forgejo_disable_http_git | ternary('true', 'false') }}
+ENABLE_PUSH_CREATE_USER = {{ forgejo_enable_push_create_user | ternary('true', 'false') }}
+ENABLE_PUSH_CREATE_ORG = {{ forgejo_enable_push_create_org | ternary('true', 'false') }}
+DISABLED_REPO_UNITS = {{ forgejo_disabled_repo_units }}
+DEFAULT_REPO_UNITS = {{ forgejo_default_repo_units }}
+DISABLE_STARS = {{ forgejo_disable_stars | ternary('true', 'false') }}
+DEFAULT_BRANCH = {{ forgejo_default_branch }}
+{{ forgejo_repository_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#repository---upload-repositoryupload
+[repository.upload]
+ENABLED = {{ forgejo_repository_upload_enabled | ternary('true', 'false') }}
+TEMP_PATH = {{ forgejo_home }}/data/tmp/uploads
+FILE_MAX_SIZE = {{ forgejo_repository_upload_max_size }}
+{{ forgejo_repository_upload_extra_config }}
+;
+;
+{% if forgejo_enable_repo_signing_options | bool %}
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#repository---signing-repositorysigning
+[repository.signing]
+SIGNING_KEY = {{ forgejo_repo_signing_key }}
+SIGNING_NAME = {{ forgejo_repo_signing_name }}
+SIGNING_EMAIL = {{ forgejo_repo_signing_email }}
+INITIAL_COMMIT = {{ forgejo_repo_initial_commit }}
+DEFAULT_TRUST_MODEL = {{ forgejo_repo_default_trust_model }}
+WIKI = {{ forgejo_repo_wiki }}
+CRUD_ACTIONS = {{ forgejo_repo_crud_actions }}
+MERGES = {{ forgejo_repo_merges }}
+{{ forgejo_enable_repo_signing_extra }}
+;
+{% endif %}
+;
+{% if forgejo_enable_cors | bool %}
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#cors-cors
+[cors]
+ENABLED = {{ forgejo_enable_cors | ternary('true', 'false') }}
+SCHEME = {{ forgejo_cors_scheme }}
+ALLOW_DOMAIN = {{ forgejo_cors_allow_domain }}
+ALLOW_SUBDOMAIN = {{ forgejo_cors_allow_subdomain | ternary('true', 'false') }}
+METHODS = {{ forgejo_cors_methods }}
+MAX_AGE = {{ forgejo_cors_max_age }}
+ALLOW_CREDENTIALS = {{ forgejo_cors_allow_credentials | ternary('true', 'false') }}
+HEADERS = {{ forgejo_cors_headers }}
+X_FRAME_OPTIONS = {{ forgejo_cors_x_frame_options }}
+{{ forgejo_cors_extra }}
+;
+{% endif %}
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#ui-ui
+[ui]
+THEMES = {{ forgejo_themes }}
+DEFAULT_THEME = {{ forgejo_theme_default }}
+SHOW_USER_EMAIL = {{ forgejo_show_user_email | ternary('true', 'false') }}
+{{ forgejo_ui_extra_config }}
+;
+;
+;
+[ui.meta]
+AUTHOR = {{ forgejo_ui_author }}
+DESCRIPTION = {{ forgejo_ui_description }}
+KEYWORDS = {{ forgejo_ui_keywords }}
+{{ forgejo_ui_meta_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#server-server
+[server]
+APP_DATA_PATH = {{ forgejo_home }}/data
+PROTOCOL = {{ forgejo_protocol }}
+DOMAIN = {{ forgejo_http_domain }}
+ROOT_URL = {{ forgejo_root_url }}
+HTTP_ADDR = {{ forgejo_http_listen }}
+HTTP_PORT = {{ forgejo_http_port }}
+START_SSH_SERVER = {{ forgejo_start_ssh | ternary('true', 'false') }}
+SSH_DOMAIN = {{ forgejo_ssh_domain }}
+SSH_PORT = {{ forgejo_ssh_port }}
+SSH_LISTEN_HOST = {{ forgejo_ssh_listen }}
+OFFLINE_MODE = {{ forgejo_offline_mode | ternary('true', 'false') }}
+{% if forgejo_enable_tls_certs | bool %}
+CERT_FILE = {{ forgejo_tls_cert_file }}
+KEY_FILE = {{ forgejo_tls_key_file }}
+{% endif %}
+LANDING_PAGE = {{ forgejo_landing_page }}
+{% if forgejo_lfs_server_enabled | bool %}
+LFS_START_SERVER = true
+LFS_JWT_SECRET = {{ forgejo_lfs_jwt_secret }}
+{% endif %}
+REDIRECT_OTHER_PORT = {{ forgejo_redirect_other_port | ternary('true', 'false') }}
+PORT_TO_REDIRECT = {{ forgejo_port_to_redirect }}
+ENABLE_ACME = {{ forgejo_enable_acme | ternary('true', 'false') }}
+{% if forgejo_enable_acme | bool %}
+{%     if forgejo_acme_url != '' %}
+ACME_URL = {{ forgejo_acme_url }}
+{%     endif %}
+ACME_ACCEPTTOS = {{ forgejo_acme_accepttos | ternary('true', 'false') }}
+ACME_DIRECTORY = {{ forgejo_acme_directory }}
+ACME_EMAIL = {{ forgejo_acme_email }}
+ACME_CA_ROOT = {{ forgejo_acme_ca_root }}
+{% endif %}
+{{ forgejo_server_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#database-database
+[database]
+DB_TYPE = {{ forgejo_db_type }}
+HOST = {{ forgejo_db_host }}
+NAME = {{ forgejo_db_name }}
+USER = {{ forgejo_db_user }}
+PASSWD = {{ forgejo_db_password }}
+SSL_MODE = {{ forgejo_db_ssl }}
+PATH = {{ forgejo_db_path }}
+LOG_SQL = {{ forgejo_db_log_sql | ternary('true', 'false') }}
+{{ forgejo_database_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#indexer-indexer
+[indexer]
+ISSUE_INDEXER_PATH = {{ forgejo_home }}/indexers/issues.bleve
+REPO_INDEXER_ENABLED = {{ forgejo_repo_indexer_enabled | ternary('true', 'false') }}
+REPO_INDEXER_PATH = {{ forgejo_home }}/indexers/repos.bleve
+REPO_INDEXER_INCLUDE = {{ forgejo_repo_indexer_include }}
+REPO_INDEXER_EXCLUDE = {{ forgejo_repo_indexer_exclude }}
+REPO_INDEXER_EXCLUDE_VENDORED = {{ forgejo_repo_exclude_vendored | ternary('true', 'false') }}
+MAX_FILE_SIZE = {{ forgejo_repo_indexer_max_file_size }}
+{{ forgejo_indexer_extra_config }}
+;
+;
+; Queue (queue and queue.*)
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#queue-queue-and-queue
+[queue.issue_indexer]
+DATADIR = {{ forgejo_home }}/indexers/issues.queue
+{{ forgejo_queue_issue_indexer_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#security-security
+[security]
+INSTALL_LOCK = true
+SECRET_KEY = {{ forgejo_secret_key }}
+DISABLE_GIT_HOOKS = {{ forgejo_disable_git_hooks | ternary('true', 'false') }}
+DISABLE_WEBHOOKS = {{ forgejo_disable_webhooks | ternary('true', 'false') }}
+INTERNAL_TOKEN = {{ forgejo_internal_token }}
+PASSWORD_CHECK_PWN = {{ forgejo_password_check_pwn | ternary('true', 'false') }}
+{{ forgejo_security_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#service-service
+[service]
+REGISTER_EMAIL_CONFIRM = {{ forgejo_register_email_confirm | ternary('true', 'false') }}
+DISABLE_REGISTRATION = {{ forgejo_disable_registration | ternary('true', 'false') }}
+REQUIRE_SIGNIN_VIEW = {{ forgejo_require_signin | ternary('true', 'false') }}
+ENABLE_NOTIFY_MAIL = {{ forgejo_enable_notify_mail | ternary('true', 'false') }}
+ENABLE_CAPTCHA = {{ forgejo_enable_captcha | ternary('true', 'false') }}
+DEFAULT_KEEP_EMAIL_PRIVATE = {{ forgejo_default_keep_mail_private | ternary('true', 'false') }}
+SHOW_REGISTRATION_BUTTON = {{ forgejo_show_registration_button | ternary('true', 'false') }}
+AUTO_WATCH_NEW_REPOS = {{ forgejo_auto_watch_new_repos | ternary('true', 'false') }}
+AUTO_WATCH_ON_CHANGES = {{ forgejo_autowatch_on_change | ternary('true', 'false') }}
+SHOW_MILESTONES_DASHBOARD_PAGE = {{ forgejo_show_milestones_dashboard_page | ternary('true', 'false') }}
+REGISTER_MANUAL_CONFIRM = {{ forgejo_register_manual_confirm | ternary('true', 'false') }}
+DEFAULT_ALLOW_CREATE_ORGANIZATION = {{ forgejo_default_allow_create_organization | ternary('true', 'false') }}
+DEFAULT_USER_IS_RESTRICTED = {{ forgejo_default_user_is_restricted | ternary('true', 'false') }}
+{% if forgejo_email_domain_allowlist is defined and forgejo_email_domain_allowlist | length  %}
+EMAIL_DOMAIN_ALLOWLIST = {{ forgejo_email_domain_allowlist }}
+{% endif %}
+DEFAULT_USER_VISIBILITY = {{ forgejo_default_user_visibility }}
+DEFAULT_ORG_VISIBILITY = {{ forgejo_default_org_visibility }}
+ALLOW_ONLY_INTERNAL_REGISTRATION = {{ forgejo_allow_only_internal_registration | ternary('true', 'false') }}
+ALLOW_ONLY_EXTERNAL_REGISTRATION = {{ forgejo_allow_only_external_registration | ternary('true', 'false') }}
+{{ forgejo_service_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#mailer-mailer
+[mailer]
+ENABLED = {{ forgejo_mailer_enabled | ternary('true', 'false') }}
+{% if forgejo_mailer_enabled | bool %}
+{%     if forgejo_mailer_use_client_cert | bool %}
+CLIENT_CERT_FILE = {{ forgejo_mailer_client_cert_file }}
+CLIENT_KEY_FILE = {{ forgejo_mailer_client_key_file }}
+{%     endif %}
+PROTOCOL = {{ forgejo_mailer_protocol }}
+SMTP_ADDR = {{ forgejo_mailer_smtp_addr }}
+SMTP_PORT = {{ forgejo_mailer_smtp_port }}
+USE_CLIENT_CERT = {{ forgejo_mailer_use_client_cert | ternary('true', 'false') }}
+FORCE_TRUST_SERVER_CERT = {{ forgejo_mailer_force_trust_server_cert | ternary('true', 'false') }}
+USER = {{ forgejo_mailer_user }}
+PASSWD = {{ forgejo_mailer_password }}
+ENABLE_HELO = {{ forgejo_mailer_enable_helo | ternary('true', 'false') }}
+FROM = {{ forgejo_mailer_from }}
+SUBJECT_PREFIX = {{ forgejo_subject_prefix }}
+SEND_AS_PLAIN_TEXT = {{ forgejo_mailer_send_as_plaintext | ternary('true', 'false') }}
+{{ forgejo_mailer_extra_config }}
+;
+{% endif %}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#session-session
+[session]
+PROVIDER = {{ forgejo_session_provider }}
+PROVIDER_CONFIG = {{ forgejo_session_provider_config }}
+{{ forgejo_session_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#picture-picture
+[picture]
+AVATAR_UPLOAD_PATH = {{ forgejo_home }}/data/avatars
+{{ forgejo_picture_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#issue-and-pull-request-attachments-attachment
+[attachment]
+ENABLED = {{ forgejo_attachment_enabled | ternary('true', 'false') }}
+ALLOWED_TYPES = {{ forgejo_attachment_types }}
+MAX_SIZE = {{ forgejo_attachment_max_size }}
+PATH = {{ forgejo_home }}/data/attachments
+{{ forgejo_attachment_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#log-log
+[log]
+ROOT_PATH = {{ forgejo_home }}/log
+{% if forgejo_log_systemd %}
+MODE = console
+{% else %}
+MODE = file
+{% endif %}
+LEVEL = {{ forgejo_log_level }}
+{{ forgejo_log_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#metrics-metrics
+[metrics]
+ENABLED = {{ forgejo_metrics_enabled | ternary('true', 'false') }}
+TOKEN = {{ forgejo_metrics_token }}
+{{ forgejo_metrics_extra }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#oauth2-oauth2
+[oauth2]
+ENABLED = {{ forgejo_oauth2_enabled | ternary('true', 'false') }}
+JWT_SECRET = {{ forgejo_oauth2_jwt_secret }}
+{{ forgejo_oauth2_extra_config }}
+;
+;
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#federation-federation
+[federation]
+ENABLED = {{ forgejo_federation_enabled | ternary('true', 'false') }}
+SHARE_USER_STATISTICS = {{ forgejo_federation_share_user_stats | ternary('true', 'false') }}
+{{ forgejo_federation_extra }}
+;
+;
+; Packages (packages)
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#packages-packages
+[packages]
+ENABLED = {{ forgejo_packages_enabled | ternary('true', 'false') }}
+{% if forgejo_packages_enabled | bool %}
+CHUNKED_UPLOAD_PATH = {{ forgejo_home }}/data/tmp/package-upload
+{{ forgejo_packages_extra }}
+{% endif %}
+;
+;
+{% if forgejo_lfs_server_enabled | bool %}
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#lfs-lfs
+[lfs]
+STORAGE_TYPE = {{ forgejo_lfs_storage_type }}
+SERVE_DIRECT = {{ forgejo_lfs_serve_direct | ternary('true', 'false') }}
+PATH = {{ forgejo_lfs_content_path }}
+{{ forgejo_lfs_extra }}
+{% endif %}
+;
+;
+{% if forgejo_actions_enabled | bool %}
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#actions-actions
+[actions]
+ENABLED = {{ forgejo_actions_enabled }}
+DEFAULT_ACTIONS_URL = {{ forgejo_actions_default_actions_url }}
+{{ forgejo_actions_extra }}
+{% endif %}
+;
+;
+; Other (other)
+; -> https://forgejo.org/docs/latest/admin/config-cheat-sheet/#other-other
+[other]
+SHOW_FOOTER_VERSION = {{ forgejo_other_show_footer_version | ternary('true', 'false') }}
+SHOW_FOOTER_TEMPLATE_LOAD_TIME = {{ forgejo_other_show_footer_template_load_time | ternary('true', 'false') }}
+ENABLE_SITEMAP = {{ forgejo_other_enable_sitemap | ternary('true', 'false') }}
+ENABLE_FEED = {{ forgejo_other_enable_feed | ternary('true', 'false') }}
+;
+;
+;
+; Optional additional config
+{{ forgejo_extra_config }}

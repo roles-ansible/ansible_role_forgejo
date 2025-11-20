@@ -1,0 +1,8 @@
+---
+# set filenames for forgejo
+forgejo_full_executable_path: "{{ forgejo_executable_path }}"
+forgejo_filename: "forgejo-{{ forgejo_version_target }}-linux-{{ forgejo_arch }}"
+forgejo_query_download: "assets[?name==`{{ forgejo_filename }}`].browser_download_url"
+forgejo_query_checksum: "assets[?name==`{{ forgejo_filename }}.sha256`].browser_download_url"
+forgejo_query_signed: "assets[?name==`{{ forgejo_filename }}.asc`].browser_download_url"
+forgejo_repo: "code.forgejo.org"
